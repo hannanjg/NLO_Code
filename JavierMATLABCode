@@ -74,7 +74,6 @@ end;
 
 % Now an off-resonance first hyperpolarizability can be computed from 
 % transition dipole moments
-% Look over firstc and secondc usage
 firstc=0.;
 secondc=0.;
 for i=2:100
@@ -91,7 +90,7 @@ end;
 betaoff=firstc-secondc
 
 % Calculating combinations of transition dipole moments
-for i=2:100
+for i=2:100 % start at 2 for second excited state
     for j=2:100
         eproduct=(firsteigenvalues(i)-firsteigenvalues(1))*(firsteigenvalues(j)-firsteigenvalues(1));
         dispersion(i,j)=transitions(i,j)/eproduct;
