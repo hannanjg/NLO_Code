@@ -37,6 +37,7 @@ finmat=mfact*(2*eye(nInt)+diag(-1*ones(nInt-1,1),1)+diag(-1*ones(nInt-1,1),-1))+
 eigenvalues=diag(eigenmat);
 
 % Storing the first 100 eigenvalues since only the initial wavefunctions have a strong effect
+% on the total wavefunction.
 firsteigenvalues=eigenvalues(1:100);
 
 % Each eigenvalue has a corresponding wavevector that stores the values of a wavefunction at a
@@ -46,7 +47,7 @@ wavefunctions=wavevector(:,1:100);
 
 % Following nested for loop checks for orthonormality by taking a dot product of all wavevectors 
 % in a matrix. Dot product will be zero for different wavevectors and will be 1 if i=j. If wavevectors
-% are orhocheck(i,j) will result in a diagonal matrix with values 1 on diagonal and 0 everywhere else.
+% are normalizable, orhocheck(i,j) will result in a diagonal matrix with values 1 on diagonal and 0 everywhere else.
 for i=1:100
     for j=1:100
         orthocheck(i,j)=dot(wavevector(:,i),wavevector(:,j));
