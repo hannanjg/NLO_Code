@@ -114,6 +114,10 @@ end;
 
 
 % Calculating dispersion factors
+% First, we calculate the product of eigenvalues. 2 for loops are set to
+% itterate through each eigenvalue and multiply it with every other eigenvalue (itself included).
+% Then, dispersion factors are calculated by looking at the ratio between each eigenvalue and 
+% the product of eigenvalues.
 for i=2:100
     for j=2:100
         eproduct=(firsteigenvalues(i)-firsteigenvalues(1))*(firsteigenvalues(j)-firsteigenvalues(1));
@@ -123,7 +127,8 @@ end;
 
 % Calculating the contributions to the first hyperpolarizability:
 % First for loop initilizes contributions. Then 3 nested for loops are used
-% add dispersion factors to the total sum of contributions
+% to add dispersion factors to the total sum of contributions.
+% Why i goes until 20?
 for i=2:20
     betapart(i)=0;
 end;
