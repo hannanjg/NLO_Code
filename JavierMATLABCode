@@ -44,9 +44,9 @@ firsteigenvalues=eigenvalues(1:100);
 % taken from the whole vector. 
 wavefunctions=wavevector(:,1:100);
 
-% Following nested for loop checks for orthonormality by taking a dot product of all wavevectors 
-% in a matrix. Dot product will be zero for different wavevectors and will be 1 if i=j. If wavevectors
-% are orhocheck(i,j) will result in a diagonal matrix with values 1 on diagonal and 0 everywhere else.
+% Checks for orthonormality by taking a dot product of all wavevectors in a matrix. 
+% Dot product will be zero for different wavevectors and will be 1 if i=j. If wavevectors
+% are, orhocheck(i,j) will result in a diagonal matrix with values 1 on diagonal and 0 everywhere else.
 for i=1:100
     for j=1:100
         orthocheck(i,j)=dot(wavevector(:,i),wavevector(:,j));
@@ -72,9 +72,10 @@ for i=1:100
     end;
 end;
 
-% This nested loop with 3 for statements calculates transition dipole moments by taking on each interpolation point
-% at a time. For each point a wavevector is multiplied by another wavevector and by x-coordinate of the interpolation point.
-% This process is repeated for all 100 wavevectors. 
+% This nested loop with 3 for statements calculates transition dipole moments by taking on 
+% each interpolation point at a time. For each point a wavevector is multiplied by another 
+% wavevector and by x-coordinate of the interpolation point. This process is repeated for 
+%all 100 wavevectors. 
 for i=1:100
     for j=1:100
         for k=1:nInt
@@ -83,22 +84,21 @@ for i=1:100
     end ;
 end;
 
-% Now an off-resonance first hyperpolarizability can be computed from 
-% transition dipole moments
-firstc=0.;
-secondc=0.;
-for i=2:100
+% Off-resonance diagonal term of the first hyperpolarizability, calculated
+% using transition dipole moments:
+firstc=0.; % initialize sumations at 0
+secondc=0.; % initialize sumations at 0
+for i=2:100 % sum for when n,m are odd
 	secondc=secondc+(xtr(1,i)*xtr(i,1)*xtr(1,1))/((eigenvalues(i)-eigenvalues(1))^2);
 end;
-for i=2:100
+for i=2:100 % sum for when m,n varry over all integers in range
 	for j=2:100
     	firstc=firstc+(xtr(1,i)*xtr(i,j)*xtr(j,1))/((eigenvalues(i)-eigenvalues(1))*(eigenvalues(j)-eigenvalues(1)));
     end;
 end;
 
-% off-resonance beta
+% Calculate off-resonance beta
 betaoff=firstc-secondc
-
 
 % Calculating combinations of transition dipole moments
 for i=2:100
@@ -110,8 +110,6 @@ for i=2:100
         end;
     end;
 end;
-
-
 
 % Calculating dispersion factors
 % First, we calculate the product of eigenvalues. 2 for loops are set to
@@ -128,7 +126,7 @@ end;
 % Calculating the contributions to the first hyperpolarizability:
 % First for loop initilizes contributions. Then 3 nested for loops are used
 % to add dispersion factors to the total sum of contributions.
-% Why i goes until 20?
+% Why i goes until only 20?
 for i=2:20
     betapart(i)=0;
 end;
@@ -139,4 +137,3 @@ for i=2:20
         end;
     end;
 end;
-
