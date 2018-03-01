@@ -58,9 +58,9 @@ end;
 % sqrt(step size) to nondimensionalize them
 % Should it be wavefunction for efficiency?
 % Are dimmensions correct?
-for i = 1:100
-    for k = 1:nInt
-    normeigenfunc(k,i) = wavevector(k,i)/sqrt(step);
+for i = 1:nInt
+    for j = 1:nInt
+    normeigenfunc(i,j) = wavevector(i,j)/sqrt(step);
     end;
 end;
 
