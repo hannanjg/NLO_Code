@@ -64,6 +64,14 @@ for i = 1:nInt
     end;
 end;
 
+% Checks for orthonormality by taking a dot product of all normalized
+% wavefunctions in a matrix. 
+for i=1:100
+    for j=1:100
+        orthocheckN(i,j)=dot(normeigenfunc(:,i),normeigenfunc(:,j));
+    end;
+end;
+
 % calculating the transition dipole moments. Following nested for loop is only required to 
 % initialize dipole moment matrix. 
 for i=1:100
