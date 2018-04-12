@@ -1,0 +1,319 @@
+% We start by clearing all variables
+clear 'all'
+%
+%
+% These are the parameters for the simulation
+%
+% latL = lattice length
+% nInt = number of interpolation points
+% step = distance between interpolation points
+%
+latL=1;
+nInt=500;
+step=latL/(nInt-1);
+mfact=1/step^2;
+%
+%
+% constructing the x-vector, storing all the interpolation points 
+x=linspace(0,latL,nInt);
+%x=linspace(-latL/2,latL/2,nInt);
+%
+% HERE is WHERE THE POTENTIAL FUNCTION IS DEFINED
+%
+% Define the normal distribution
+% nf = @(ac,x0,sigma,x) -ac*(1/(sigma*sqrt(2*pi)))*exp(-(x-x0)^2/(2*sigma^2)); 
+%
+% constructing the potential-vector
+% 
+%for i=1:nInt,pot(i)=x(i)^2; end;
+%for i=1:nInt,pot(i)=sinh(x(i))+cosh(x(i)); end;
+%for i=1:nInt,pot(i)=0.052*x(i); end;
+%for i=1:nInt,pot(i)=0; end;
+for i=1:nInt,pot(i)=(x(i)^2)/16; end;
+%
+%for i=1:nInt,pot(i)=exp(x(i)); end;
+% k= 1
+%for i=1:nInt,pot(i)=10*x(i)/latL; end;
+%
+%
+% Plotting the potential vector
+figure(1)
+plot(x,pot)
+grid on
+set(gca,'XTick',-5:1:5)
+title('Potential Function','FontSize',20,...
+    'FontName','Times New Roman');
+xlabel('\alpha','FontSize',24,'FontName','Times New Roman');
+ylabel('V(\alpha)','FontSize',20,'FontName','Times New Roman');
+%
+%
+%
+%
+%
+% constructing the trigonal matrix
+%
+%
+mauxdiag=diag(pot);
+finmat=mfact*(2*eye(nInt)+diag(-1*ones(nInt-1,1),1)+diag(-1*ones(nInt-1,1),-1))+mauxdiag;
+% solving for eigenvalues and eigenfuctions
+[wavevector,eigenmat]=eig(finmat);
+eigenvalues=diag(eigenmat);
+%
+% Storing the first eigenvalues
+%
+firsteigenvalues=eigenvalues(1:100);
+%
+figure(2)
+plot(firsteigenvalues)
+grid on
+axis([0,100,0,1000])
+set(gca,'XTick',0:20:100)
+set(gca,'YTick',0:200:1000)
+title('First 100 eigenenergies','FontSize',20,...
+    'FontName','Times New Roman');
+xlabel('n','FontSize',24,'FontName','Times New Roman');
+ylabel('e(n)','FontSize',24,'FontName','Times New Roman');
+%
+%
+figure(3)
+plot(firsteigenvalues)
+grid on
+axis([0,20,0,40])
+set(gca,'XTick',0:2:20)
+set(gca,'YTick',0:10:40)
+title('First 20 eigenenergies','FontSize',20,...
+    'FontName','Times New Roman');
+xlabel('n','FontSize',24,'FontName','Times New Roman');
+ylabel('e(n)','FontSize',24,'FontName','Times New Roman');
+%
+%
+% Storing the first 100 wavefunctions
+wavefunctions=wavevector(:,1:100);
+%
+%
+% Checking Orthonormality
+%
+for i=1:100
+	for j=1:100 
+    	orthocheck(i,j)=dot(wavevector(:,i),wavevector(:,j)); 
+    end; 
+end;
+%
+%
+figure(4)
+mesh(orthocheck);figure(gcf);
+title('orthocheck')
+%
+%
+%calculating the transition dipole moments
+for i=1:100
+	for j=1:100
+			xtr(i,j)=0;
+    end;
+end;
+for i=1:100
+	for j=1:100
+		for k=1:nInt
+		xtr(i,j)=xtr(i,j)+wavevector(k,i)*x(k)*wavevector(k,j);
+		end
+   end;
+end;
+% 
+%
+figure(5)
+surfc(xtr(1:20,1:20));figure(gcf);
+colorbar
+title('First 20 transition moments - surfc')
+%
+figure(6)
+contourf(xtr(1:20,1:20));figure(gcf);
+colorbar
+grid on
+title('First 20 transition moments - contourf')
+%
+%
+% Now we can compute the off-resonance second hyperpolarizability
+%
+%
+%
+% Finally we generate plots with the wavefunctions^2 
+% that is the probability of finding the electron
+%
+%
+figure(7)
+subplot(5,1,1)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,1)).^2, 'r')
+title ('Probability distribution for wavefunction 1')
+subplot (5,1,2)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,2)).^2, 'b')
+title ('Probability distribution for wavefunction 2')
+subplot (5,1,3)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,3)).^2, 'k')
+title ('Probability distribution for wavefunction')
+subplot (5,1,4)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,4)).^2, 'g')
+title ('Probability distribution for wavefunction 4')
+subplot (5,1,5)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,5)).^2, 'Color', [0.3,0.2,0.0])
+title ('Probability distribution for wavefunction 5')
+%
+%
+figure(8)
+subplot(5,1,1)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,6)).^2, 'Color', [1,0.3,0])
+title ('Probability distribution for wavefunction 6')
+subplot(5,1,2)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,7)).^2, 'Color', [1,0.3,1])
+title ('Probability distribution for wavefunction 7')
+subplot(5,1,3)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,8)).^2, 'Color', [0.4,0.3,0])
+title ('Probability distribution for wavefunction 8')
+subplot(5,1,4)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,9)).^2, 'Color', [0.0,0.3,0.5])
+title ('Probability distribution for wavefunction 9')
+subplot(5,1,5)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,10)).^2, 'Color', [0.3,0.3,1])
+title ('Probability distribution for wavefunction 10')
+%
+%
+%
+% Finally we generate plots with the wavefunctions 
+% to see how we can use orthogonality to guess the shape of the
+% wavefunctions
+%
+%
+figure(9)
+subplot(5,1,1)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,1)))
+title ('Wavefunction 1')
+grid on
+subplot (5,1,2)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,2)))
+title ('Wavefunction 2')
+grid on
+subplot (5,1,3)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,3)))
+title ('Wavefunction 3')
+grid on
+subplot (5,1,4)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,4)))
+title ('Wavefunction 4')
+grid on
+subplot (5,1,5)
+plot (x,((nInt/(latL))^(.5)*wavevector(:,5)))
+title ('Wavefunction 5')
+grid on
+%
+%
+%
+% Now we can compute the off-resonance first hyperpolarizability
+firstc=0.;
+secondc=0.;
+for i=2:100
+	secondc=secondc+(xtr(1,i)*xtr(i,1)*xtr(1,1))/((eigenvalues(i)-eigenvalues(1))^2);
+end;
+for i=2:100
+	for j=2:100
+%        i,j, 
+    	firstc=firstc+(xtr(1,i)*xtr(i,j)*xtr(j,1))/((eigenvalues(i)-eigenvalues(1))*(eigenvalues(j)-eigenvalues(1)));
+    end;
+end;
+%
+% off-resonance beta
+betaoff=firstc-secondc
+%
+%
+%
+% Calculating combinations of transition dipole moments
+%for i=2:100
+%	for j=2:100
+%			transitions(i,j)=0;
+%    end;
+%end;
+for i=2:100
+	for j=2:100
+	if i==j
+        transitions(i,j)=xtr(1,i)*(xtr(i,i)-xtr(1,1))*xtr(i,1);
+    else
+        transitions(i,j)=xtr(1,i)*xtr(i,j)*xtr(j,1);
+    end;
+   end;
+end;
+% 
+%
+figure(10)
+contourf(transitions);figure(gcf);
+colorbar
+title('First 100 transition moments')
+%
+figure(11)
+surfc(transitions(1:5,1:5));figure(gcf);
+colorbar
+title('First 5 transition moments')
+%
+% Calculating the dispersion factors
+for i=2:100
+	for j=2:100
+        eproduct=(firsteigenvalues(i)-firsteigenvalues(1))*(firsteigenvalues(j)-firsteigenvalues(1));
+        dispersion(i,j)=transitions(i,j)/eproduct;
+   end;
+end;
+% 
+%
+figure(12)
+contourf(dispersion);figure(gcf);
+colorbar
+title('First 100 dispersion terms')
+%
+%
+figure(13)
+surfc(dispersion(1:5,1:5));figure(gcf);
+colorbar
+title('First 5 dispersion terms')
+%
+figure(14)
+contourf(dispersion(1:5,1:5));figure(gcf);
+grid on
+colorbar
+title('First 5 dispersion terms')
+
+%
+% Calculating the contributions to the first hyperpolarizability
+%
+%
+for i=2:20
+    betapart(i)=0;
+end;
+for i=2:20
+    for j=2:i
+        for k=2:i
+            betapart(i)=betapart(i)+dispersion(j,k);
+        end;
+    end;
+end;
+figure(15)
+plot(betapart,'--rs','LineWidth',2,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','g',...
+                'MarkerSize',10)
+grid on
+title('Partial betas','FontSize',20,...
+    'FontName','Times New Roman');
+xlabel('n','FontSize',24,'FontName','Times New Roman');
+ylabel('beta(n)','FontSize',24,'FontName','Times New Roman');
+%
+%
+figure(16)
+plot(betapart(1:5),'--rs','LineWidth',2,...
+                'MarkerEdgeColor','k',...
+                'MarkerFaceColor','g',...
+                'MarkerSize',10)
+grid on
+title('First 5 Partial betas','FontSize',20,...
+    'FontName','Times New Roman');
+xlabel('n','FontSize',24,'FontName','Times New Roman');
+ylabel('beta(n)','FontSize',24,'FontName','Times New Roman');
+%
+%
+betaoff
+betapart(20)
